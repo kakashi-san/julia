@@ -461,6 +461,7 @@ int LateLowerGCFrame::Number(State &S, Value *V) {
         return Number;
     } else if (isa<ExtractValueInst>(CurrentV) && !isUnionRep(CurrentV->getType())) {
         assert(false && "TODO: Extract");
+        abort();
     } else {
         assert(
             (CurrentV->getType()->isPointerTy() &&
