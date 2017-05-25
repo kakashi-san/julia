@@ -212,7 +212,7 @@ versions of the MinGW-w64 compilers available through Cygwin's package manager.
 
     1. Get the Julia sources
        ```sh
-       git clone --recursive https://github.com/JuliaLang/julia.git
+       git clone https://github.com/JuliaLang/julia.git
        cd julia
        ```
        Tip: If you get an `error: cannot fork() for fetch-pack: Resource
@@ -235,8 +235,8 @@ versions of the MinGW-w64 compilers available through Cygwin's package manager.
        
     > Protip: build both!
     > ```sh
-    > make -O julia-win32 configure
-    > make -O julia-win64 configure
+    > make O=julia-win32 configure
+    > make O=julia-win64 configure
     > echo 'XC_HOST = i686-w64-mingw32' > julia-win32/Make.user
     > echo 'XC_HOST = x86_64-w64-mingw32' > julia-win64/Make.user
     > echo 'ifeq ($(BUILDROOT),$(JULIAHOME))
