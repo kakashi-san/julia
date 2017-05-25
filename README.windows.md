@@ -183,6 +183,11 @@ versions of the MinGW-w64 compilers available through Cygwin's package manager.
     or [64 bit](http://cygwin.com/setup-x86_64.exe). Note, that you can compile
     either 32 or 64 bit Julia from either 32 or 64 bit Cygwin. 64 bit Cygwin
     has a slightly smaller but often more up-to-date selection of packages.
+    
+    Advanced: you may skip steps 2-4 by running:
+    
+        setup-x86_64.exe -q -P cmake,gcc-g++,git,make,patch,curl,m4,python,p7zip,mingw64-i686-gcc-g++,mingw64-i686-gcc-fortran,mingw64-x86_64-gcc-g++,mingw64-x86_64-gcc-fortran
+        :: add -s <url> if you want to override the default download site
 
  2. Select installation location and download mirror.
 
@@ -219,13 +224,27 @@ versions of the MinGW-w64 compilers available through Cygwin's package manager.
        ```sh
        echo 'XC_HOST = i686-w64-mingw32' > Make.user     # for 32 bit Julia
        # or
-       echo 'XC_HOST = x86_64-w64-mingw32' > Make.user   #for 64 bit Julia
+       echo 'XC_HOST = x86_64-w64-mingw32' > Make.user   # for 64 bit Julia
        ```
 
     3. Start the build
        ```sh
        make -j 4   # Adjust the number of cores (4) to match your build environment.
        ```
+       
+       
+    > Protip: build both!
+    > ```sh
+    > make -O julia-win32 configure
+    > make -O julia-win64 configure
+    > echo 'XC_HOST = i686-w64-mingw32' > julia-win32/Make.user
+    > echo 'XC_HOST = x86_64-w64-mingw32' > julia-win64/Make.user
+    > echo 'ifeq ($(BUILDROOT),$(JULIAHOME))
+    >         $(error "in-tree build disabled")
+    >       endif' >> Make.user
+    > make -C julia-win32  # build for Windows x86 in julia-win32 folder
+    > make -C julia-win64  # build for Windows x86-64 in julia-win64 folder
+    > ```
 
  7. Run Julia using the Julia executables directly
     ```sh
