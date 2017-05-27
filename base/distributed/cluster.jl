@@ -150,6 +150,11 @@ function start_worker(out::IO, cookie::AbstractString)
     # exit when process 1 shut down. Don't yet know why.
     #redirect_stderr(STDOUT)
 
+    if cookie == ""
+        cookie = readline(STDIN)
+    end
+    close(STDIN) # workers will not use it
+
     init_worker(cookie)
     interface = IPv4(LPROC.bind_addr)
     if LPROC.bind_port == 0
@@ -167,8 +172,6 @@ function start_worker(out::IO, cookie::AbstractString)
     print(out, LPROC.bind_addr)
     print(out, '\n')
     flush(out)
-    # close STDIN; workers will not use it
-    #close(STDIN)
 
     disable_nagle(sock)
 
@@ -525,7 +528,8 @@ function launch_additional(np::Integer, cmd::Cmd)
     addresses = Vector{Any}(np)
 
     for i in 1:np
-        io = open(detach(cmd))
+        io = open(detach(cmd), "r+")
+        write_cookie(io)
         io_objs[i] = io.out
     end
 
@@ -1043,3 +1047,5 @@ function init_parallel()
     assert(isempty(PGRP.workers))
     register_worker(LPROC)
 end
+
+write_cookie(io::IO) = write(io.in, string(cluster_cookie(), "\n"))
